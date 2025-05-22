@@ -9,7 +9,6 @@ class TransactionsController < ApplicationController
 
   # GET /transactions/1
   def show
-    @transaction = current_account.transactions.find(params[:id])
   end
 
   # GET /transactions/new
@@ -65,6 +64,6 @@ class TransactionsController < ApplicationController
   end
 
   def transaction_params
-    params.require(:transaction).permit(:category_id, :date, :amount, :transaction_type)
+    params.require(:transaction).permit(:amount, :category_id, :date, :transaction_type, :account_id)
   end
 end

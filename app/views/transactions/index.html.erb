@@ -6,6 +6,7 @@
   <thead>
     <tr>
       <th>Category</th>
+      <th>Type</th> <!-- ✅ New Column -->
       <th>Date</th>
       <th>Amount</th>
       <th>Actions</th>
@@ -14,7 +15,19 @@
   <tbody>
     <% @transactions.each do |transaction| %>
       <tr>
-       <td><%= transaction.category.name if transaction.category.present? %></td>
+        <td><%= transaction.category.name if transaction.category.present? %></td>
+        
+        <!-- ✅ Show Income or Expense -->
+        <td>
+          <% if transaction.transaction_type.present? %>
+            <span class="badge <%= transaction.transaction_type == 'income' ? 'bg-success' : 'bg-danger' %>">
+              <%= transaction.transaction_type.capitalize %>
+            </span>
+          <% else %>
+            <span class="text-muted">N/A</span>
+          <% end %>
+        </td>
+
         <td>
           <% if transaction.date.present? %>
             <%= transaction.date.strftime('%b-%d-%y') %>
@@ -22,15 +35,19 @@
             N/A
           <% end %>
         </td>
+
         <td class="<%= transaction.amount.nil? || transaction.amount.negative? ? 'text-danger' : 'text-success' %>">
           <%= number_to_currency(transaction.amount, unit: '$') if transaction.amount.present? %>
           <% if transaction.amount.nil? %>
             N/A
           <% end %>
         </td>
+
         <td>
-          <%= link_to '✏️', edit_transaction_path(transaction), class: 'btn btn-sm btn-outline-light' %>
-          <%= link_to '🗑️', transaction_path(transaction), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger' %>
+          <div class="d-flex gap-1 align-items-center">
+            <%= link_to '✏️', edit_transaction_path(transaction), class: 'btn btn-outline-light btn-sm px-2 py-0' %>
+            <%= link_to '🗑️', transaction_path(transaction), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm px-2 py-0' %>
+          </div>
         </td>
       </tr>
     <% end %>

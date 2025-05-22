@@ -6,6 +6,12 @@
     }
   </style>
 </head>
+<% if flash[:alert] %>
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <%= flash[:alert] %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% end %>
 
 <div class="row">
   <!-- Total Income Card -->
@@ -139,4 +145,5 @@ const categoryData = <%= @category_expenses.values.to_json.html_safe %>;
       }
     }
   });
+  
 </script>

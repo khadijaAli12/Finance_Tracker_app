@@ -22,12 +22,13 @@
             <% else %>
               <span class="badge bg-danger">Expense</span>
             <% end %>
-          </td>
-          <td class="d-flex justify-content-start">
-            <%= link_to '✏️', edit_category_path(category), class: 'btn btn-sm btn-outline-light me-2' %>
-            <%= button_to '🗑️', category_path(category), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger' %>
-          </td>
-        </tr>
+          <td>
+  <div class="d-flex gap-1 align-items-center">
+    <%= link_to '✏️', edit_category_path(category), class: 'btn btn-outline-light btn-sm px-2 py-0' %>
+    <%= button_to '🗑️', category_path(category), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm px-2 py-0' %>
+  </div>
+</td>
+
       <% end %>
     </tbody>
   </table>

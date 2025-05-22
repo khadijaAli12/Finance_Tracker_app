@@ -1,26 +1,152 @@
-<%= form_with model: @transaction, local: true do |f| %>
-  <div class="form-group">
-    <%= f.label :amount %>
-    <%= f.number_field :amount, step: "0.01", class: "form-control" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Add Transaction - MONETRA</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    body {
+      background-color: #212529;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-container {
+      padding: 30px;
+    }
+
+    .form-title {
+      color: #198754;
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .btn-custom {
+      background-color: #198754;
+      border: none;
+      color: #212529;
+      font-size: 16px;
+      padding: 12px 20px;
+      border-radius: 6px;
+      width: 100%;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .btn-custom:hover {
+      transform: scale(1.05);
+      background-color: #198754;
+    }
+
+    .form-control, .form-select {
+      background-color: #444;
+      color: #fff;
+      border: 1px solid #555;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .form-control:focus, .form-select:focus {
+      background-color: #555;
+      border-color:  #198754;
+      box-shadow: 0 0 8px rgba(13, 202, 240, 0.5);
+    }
+
+    .form-label, label {
+      color: #ccc;
+    }
+
+    .back-link a {
+      color: #bbb;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .back-link a:hover {
+      color:  #198754;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="form-container bg-dark rounded-4 shadow-lg">
+          <h3 class="form-title"><i class="bi bi-cash-coin me-2"></i>Add New Transaction</h3>
+          <p class="text-center text-muted mb-4"><%= Time.now.strftime('%A, %d %B %Y') %></p>
+
+          <% if @transaction.errors.any? %>
+            <div class="alert alert-danger border border-light rounded-4 px-4 py-3">
+              <h6><%= pluralize(@transaction.errors.count, "error") %> prevented this transaction:</h6>
+              <ul class="mb-0">
+                <% @transaction.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <%= form_with model: @transaction, local: true do |f| %>
+            <div class="mb-3">
+              <%= f.label :amount, "💸 Amount", class: "form-label" %>
+              <%= f.number_field :amount, step: "0.01", class: "form-control", placeholder: "Enter amount" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :category_id, "📂 Category", class: "form-label" %>
+              <%= f.collection_select :category_id, current_account.categories, :id, :name,
+                    { include_blank: "Select a category" },
+                    { class: "form-select" } %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :date, "📅 Date", class: "form-label" %>
+              <%= f.date_field :date, value: Date.today, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :transaction_type, "🔄 Transaction Type", class: "form-label" %><br>
+              <div class="form-check form-check-inline">
+                <%= f.radio_button :transaction_type, "income", class: "form-check-input", id: "income_radio" %>
+                <label class="form-check-label text-success" for="income_radio">Income</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <%= f.radio_button :transaction_type, "expense", class: "form-check-input", id: "expense_radio" %>
+                <label class="form-check-label text-danger" for="expense_radio">Expense</label>
+              </div>
+            </div>
+
+            <%= f.hidden_field :account_id, value: current_account.id %>
+
+            <div class="d-grid mt-4">
+              <%= f.submit "💾 Save Transaction", class: "btn btn-custom" %>
+            </div>
+          <% end %>
+
+          <div class="back-link mt-4 text-center">
+            <%= link_to "🔙 Back to Transactions", transactions_path %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="form-group">
-    <%= f.label :category %>
-    <%= f.collection_select :category_id, Category.all, :id, :name, { include_blank: "Select a category" }, { class: "form-control" } %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :date %>
-    <%= f.date_select :date, class: "form-control" %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :transaction_type, "Type" %>
-    <%= f.radio_button :transaction_type, "income" %> Income
-    <%= f.radio_button :transaction_type, "expense" %> Expense
-  </div>
-
-  <%= f.hidden_field :account_id, value: current_account.id %> <!-- Automatically associate with the current user -->
-
-  <%= f.submit "Save Transaction", class: "btn btn-primary" %>
-<% end %>
+</body>
+</html>

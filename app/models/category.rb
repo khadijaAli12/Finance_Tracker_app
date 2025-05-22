@@ -1,5 +1,4 @@
 class Category < ApplicationRecord
-  has_many :transactions, dependent: :destroy
   belongs_to :account
-  has_many :transactions
+  has_many :transactions, dependent: :destroy
 end
