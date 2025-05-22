@@ -1,57 +1,41 @@
 class ReportsController < ApplicationController
   before_action :authenticate_account!
- class ReportsController < ApplicationController
-  before_action :authenticate_user! # if you're using Devise
-
-  def index
-    # Your existing index action for rendering the view
-  end
 
   def monthly_summary_data
-    # If you have separate Income and Expense models
-    incomes = current_user.incomes
-      .group("DATE_FORMAT(created_at, '%Y-%m')")
-      .sum(:amount)
+    transactions = current_account.transactions.includes(:category)
 
-    expenses = current_user.expenses
-      .group("DATE_FORMAT(created_at, '%Y-%m')")
-      .sum(:amount)
+    # Group by month manually
+    monthly_summary = {}
 
-    # Combine data
-    all_months = (incomes.keys + expenses.keys).uniq
-    summary = {}
+    transactions.each do |transaction|
+      month_key = transaction.date.beginning_of_month
+      month_label = month_key.strftime("%B %Y")
 
-    all_months.each do |month|
-      summary[month] = {
-        month: format_month(month),
-        total_income: incomes[month] || 0,
-        total_expense: expenses[month] || 0
+      monthly_summary[month_key] ||= {
+        month: month_label,
+        total_income: 0.0,
+        total_expense: 0.0
       }
+
+      # Match your exact category types
+      if transaction.category.category_type == "Income"
+        monthly_summary[month_key][:total_income] += transaction.amount.to_f
+      elsif transaction.category.category_type == "Expense"
+        monthly_summary[month_key][:total_expense] += transaction.amount.to_f
+      end
     end
 
-    # Sort by month
-    sorted_summary = summary.values.sort_by { |data| data[:month] }
-
-    # Prepare chart data
-    chart_labels = sorted_summary.map { |data| data[:month] }
-    chart_income = sorted_summary.map { |data| data[:total_income] }
-    chart_expense = sorted_summary.map { |data| data[:total_expense] }
+    # Sort by month and limit to 6 recent months
+    sorted_data = monthly_summary.sort_by { |month_key, _| month_key }.last(6).map { |_, data| data }
 
     render json: {
-      monthly_data: sorted_summary,
-      chart_labels: chart_labels,
-      chart_income: chart_income,
-      chart_expense: chart_expense
+      monthly_data: sorted_data,
+      chart_labels: sorted_data.map { |data| data[:month] },
+      chart_income: sorted_data.map { |data| data[:total_income] },
+      chart_expense: sorted_data.map { |data| data[:total_expense] }
     }
   end
 
-private
-
-  def format_month(month_string)
-    # Convert '2024-01' to 'Jan 2024'
-    Date.strptime(month_string, "%Y-%m").strftime("%b %Y")
-  rescue
-    month_string
+  def index
   end
- end
 end
