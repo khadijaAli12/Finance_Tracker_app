@@ -11,10 +11,16 @@ Rails.application.routes.draw do
 
   # Resources for other sections
   resources :transactions
-  resources :reports
+  # resources :reports
+  # get "monthly_summary_data", to: "reports#monthly_summary_data"
+
   get "settings", to: "settings#index"
   patch "settings/update_profile", to: "settings#update_profile"
   patch "settings/update_password", to: "settings#update_password"
   patch "settings/update_preferences", to: "settings#update_preferences"
   delete "settings/delete_account", to: "settings#destroy_account"
+  get "reports/index"
+  get "/dashboard", to: "dashboard#index"
+  get "/reports", to: "reports#index"
+  get "monthly_summary_data", to: "reports#monthly_summary_data"
 end

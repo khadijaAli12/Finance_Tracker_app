@@ -14,7 +14,7 @@
     </thead>
     <tbody>
       <% @categories.each do |category| %>
-        <tr>
+        <tr class="align-middle">
           <td><%= category.name %></td>
           <td>
             <% if category.category_type == "Income" %>
@@ -22,13 +22,14 @@
             <% else %>
               <span class="badge bg-danger">Expense</span>
             <% end %>
+          </td>
           <td>
-  <div class="d-flex gap-1 align-items-center">
-    <%= link_to '✏️', edit_category_path(category), class: 'btn btn-outline-light btn-sm px-2 py-0' %>
-    <%= button_to '🗑️', category_path(category), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm px-2 py-0' %>
-  </div>
-</td>
-
+            <div class="d-flex gap-1 align-items-center">
+              <%= link_to '✏️', edit_category_path(category), class: 'btn btn-outline-light btn-sm px-2 py-0' %>
+              <%= button_to '🗑️', category_path(category), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm px-2 py-0' %>
+            </div>
+          </td>
+        </tr>
       <% end %>
     </tbody>
   </table>

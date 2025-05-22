@@ -11,14 +11,8 @@
           <th>Total Expense</th>
         </tr>
       </thead>
-      <tbody>
-        <% @monthly_data.each do |data| %>
-          <tr>
-            <td><%= data.month.strftime("%B %Y") %></td>
-            <td class="text-success">$<%= number_with_precision(data.total_income, precision: 2) %></td>
-            <td class="text-danger">$<%= number_with_precision(data.total_expense, precision: 2) %></td>
-          </tr>
-        <% end %>
+      <tbody id="monthly-summary-body">
+        <!-- Filled dynamically by JavaScript -->
       </tbody>
     </table>
   </div>
@@ -35,57 +29,96 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const ctx = document.getElementById('incomeExpenseChart');
+    const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+    let incomeExpenseChart;
 
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: <%= raw @chart_labels.to_json %>,
-        datasets: [
-          {
-            label: 'Income',
-            data: <%= raw @chart_income.to_json %>,
-            borderColor: 'rgba(0, 255, 132, 1)',
-            backgroundColor: 'rgba(0, 255, 132, 0.1)',
-            tension: 0.3,
-            fill: true
-          },
-          {
-            label: 'Expense',
-            data: <%= raw @chart_expense.to_json %>,
-            borderColor: 'rgba(255, 99, 132, 1)',
-            backgroundColor: 'rgba(255, 99, 132, 0.1)',
-            tension: 0.3,
-            fill: true
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { labels: { color: 'white' } },
-          tooltip: { mode: 'index', intersect: false }
+    function renderTable(data) {
+      const tbody = document.getElementById('monthly-summary-body');
+      tbody.innerHTML = '';
+
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.month}</td>
+          <td class="text-success">$${parseFloat(row.total_income).toFixed(2)}</td>
+          <td class="text-danger">$${parseFloat(row.total_expense).toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderChart(labels, income, expense) {
+      if (incomeExpenseChart) incomeExpenseChart.destroy();
+
+      incomeExpenseChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Income',
+              data: income,
+              borderColor: 'rgba(0, 255, 132, 1)',
+              backgroundColor: 'rgba(0, 255, 132, 0.1)',
+              tension: 0.3,
+              fill: true
+            },
+            {
+              label: 'Expense',
+              data: expense,
+              borderColor: 'rgba(255, 99, 132, 1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.1)',
+              tension: 0.3,
+              fill: true
+            }
+          ]
         },
-        scales: {
-          x: { 
-            ticks: { 
-              color: 'white' 
-            }, 
-            grid: {
-              color: 'rgba(255, 255, 255, 0.1)'
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: {
+                color: 'white'
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
             }
           },
-          y: { 
-            ticks: { 
-              color: 'white' 
+          scales: {
+            x: {
+              ticks: {
+                color: 'white'
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
             },
-            beginAtZero: true,
-            grid: {
-              color: 'rgba(255, 255, 255, 0.1)'
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: 'white'
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
             }
           }
         }
-      }
-    });
+      });
+    }
+
+    function fetchAndRender() {
+      fetch('/monthly_summary_data')
+        .then(response => response.json())
+        .then(data => {
+          renderTable(data.monthly_data);
+          renderChart(data.chart_labels, data.chart_income, data.chart_expense);
+        })
+        .catch(error => console.error('Error fetching monthly summary:', error));
+    }
+
+    fetchAndRender();
   });
 </script>
