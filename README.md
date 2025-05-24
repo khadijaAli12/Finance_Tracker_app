@@ -19,7 +19,7 @@ The goal of this application is to help users:
 
 - Ruby on Rails (v7+)  
 - PostgreSQL  
-- Tailwind CSS (via Rails)  
+- bootstrap (via Rails)  
 - Devise for user authentication  
 
 ---
