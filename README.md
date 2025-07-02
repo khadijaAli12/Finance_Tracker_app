@@ -23,6 +23,21 @@ The goal of this application is to help users:
 - Devise for user authentication  
 
 ---
+## Overview of complete project
+![image](https://github.com/user-attachments/assets/4d1f79f2-2ba9-4291-9acb-cb1a429c56f4)
+![image](https://github.com/user-attachments/assets/99dee6dc-1fa9-4c42-9535-7e54f64c81b6)
+![image](https://github.com/user-attachments/assets/30c67eab-03c7-42b5-a25d-87b581fe2c86)
+![image](https://github.com/user-attachments/assets/17ee25cb-50ca-43d4-970c-a864fe22f9a4)
+![image](https://github.com/user-attachments/assets/ca7d451c-0b9b-4c83-9d69-6125139a0c80)
+![image](https://github.com/user-attachments/assets/c1b38c85-6908-4f8a-ae7d-901d9d7024f1)
+![image](https://github.com/user-attachments/assets/957e07e6-9681-4a7a-9b6a-c7cc0e216e67)
+![image](https://github.com/user-attachments/assets/b6be5a2a-efd2-4c51-b73e-b5d183d38933)
+![image](https://github.com/user-attachments/assets/a798f130-be8a-46dc-bfa9-4c4b75b1c19f)
+![image](https://github.com/user-attachments/assets/1b93e778-03f6-40f7-9e7b-8c31648fc66e)
+![image](https://github.com/user-attachments/assets/c865b0eb-c51f-4bf8-81de-318f112b96ca)
+![image](https://github.com/user-attachments/assets/2f134e3a-b08e-4dfb-8252-487ca6af9974)
+
+
 
 ## Completed Features
 
@@ -133,6 +148,7 @@ bin/rails db:drop
 
 ---
 
-License
+License  
+
 
 This project is open source and available under the MIT License.
