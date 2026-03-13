@@ -1,7 +1,7 @@
 # Personal Finance Tracker
 
 A Ruby on Rails-based web application to help users manage their personal finances by tracking incomes, expenses, and budgets. The system includes user authentication, transaction categorization, and a responsive UI using Rails views and Tailwind CSS.
-
+# Built with Ruby on Rails — HTML% is ERB templates
 ---
 
 ## Project Overview
